@@ -1,0 +1,100 @@
+/* الخطوط */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;800&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Cairo', 'Nunito', sans-serif;
+    background-color: #F0F9FF;
+    background-image: radial-gradient(#E0F2FE 15%, transparent 16%), radial-gradient(#E0F2FE 15%, transparent 16%);
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
+    overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+    background: #F472B6; 
+    border-radius: 20px;
+    border: 3px solid #f1f1f1;
+}
+
+/* Utility Classes for Kids Theme */
+.font-heading {
+    font-family: 'Tajawal', sans-serif;
+}
+
+.shadow-pop {
+    box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.1);
+}
+.shadow-pop-lg {
+    box-shadow: 0px 6px 0px 0px rgba(0,0,0,0.1);
+}
+.shadow-pop-colored {
+    box-shadow: 0px 6px 0px 0px currentColor;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+.animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+}
+
+.hover-bounce:hover {
+    transform: translateY(-5px);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Hide/Show logic for SPA */
+.page-section {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.page-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Video Responsive */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #000;
+}
+.video-container iframe, .video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}

@@ -1,121 +1,288 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gharas Platform | منصة غرس التعليمية</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gharas | غرس</title>
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Custom Config -->
     <script>
       tailwind.config = {
         theme: {
           extend: {
-            fontFamily: {
-              sans: ['Cairo', 'Nunito', 'sans-serif'],
-              heading: ['Tajawal', 'Nunito', 'sans-serif'],
-              en: ['Nunito', 'sans-serif'],
-            },
             colors: {
-              gharas: {
-                50: '#f0fdf4',
-                100: '#dcfce7',
-                200: '#bbf7d0',
-                300: '#86efac',
-                400: '#4ade80',
-                500: '#22c55e',
-                600: '#16a34a',
-                700: '#15803d',
-                800: '#166534',
-                900: '#14532d',
-              },
-              kid: {
-                yellow: '#FCD34D', // Amber 300
-                orange: '#FB923C', // Orange 400
-                red: '#F87171',    // Red 400
-                pink: '#F472B6',   // Pink 400
-                purple: '#C084FC', // Purple 400
-                blue: '#60A5FA',   // Blue 400
-                cyan: '#22D3EE',   // Cyan 400
-                green: '#4ADE80',  // Green 400
-                lime: '#A3E635',   // Lime 400
-                bg: '#F0F9FF',     // Light Blue BG
-              }
+              gharas: { 500: '#22c55e', 600: '#16a34a' }
             },
-            boxShadow: {
-              'pop': '0px 4px 0px 0px rgba(0,0,0,0.1)',
-              'pop-lg': '0px 6px 0px 0px rgba(0,0,0,0.1)',
-              'pop-colored': '0px 6px 0px 0px currentColor',
-            },
-            animation: {
-              'float': 'float 3s ease-in-out infinite',
-              'bounce-slow': 'bounce 3s infinite',
-              'wiggle': 'wiggle 1s ease-in-out infinite',
-            },
-            keyframes: {
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-10px)' },
-              },
-              wiggle: {
-                '0%, 100%': { transform: 'rotate(-3deg)' },
-                '50%': { transform: 'rotate(3deg)' },
-              }
-            }
+            fontFamily: { sans: ['Cairo', 'sans-serif'] }
           }
         }
       }
     </script>
-    <style>
-      body {
-        font-family: 'Cairo', 'Nunito', sans-serif;
-        background-color: #F0F9FF; /* Kid BG */
-        background-image: radial-gradient(#E0F2FE 15%, transparent 16%), radial-gradient(#E0F2FE 15%, transparent 16%);
-        background-size: 60px 60px;
-        background-position: 0 0, 30px 30px;
-      }
-      
-      /* RTL/LTR Support for mixed content */
-      [dir="ltr"] body {
-        font-family: 'Nunito', 'Cairo', sans-serif;
-      }
-      
-      /* Custom scrollbar for kid-friendly look */
-      ::-webkit-scrollbar {
-        width: 16px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f1f1; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #F472B6; 
-        border-radius: 20px;
-        border: 4px solid #f1f1f1;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #EC4899; 
-      }
-
-      /* Bouncy Click Effect */
-      button:active {
-        transform: scale(0.95);
-      }
-    </style>
-  <script type="importmap">
+    <link rel="stylesheet" href="style.css">
+<script type="importmap">
 {
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
   }
 }
 </script>
 </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<body class="bg-[#F0F9FF]">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top bg-white/90 backdrop-blur-md shadow-sm border-bottom border-gray-100 py-3 mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="navigateTo('home')">
+                <div class="bg-green-500 p-2 rounded-xl text-white shadow-sm rotate-3">
+                    <i data-lucide="leaf"></i>
+                </div>
+                <span class="fw-black text-2xl text-green-600 font-heading">غرس</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-bold gap-3">
+                    <li class="nav-item"><a class="nav-link nav-link-custom active" data-page="home" href="#">الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-custom" data-page="courses" href="#">الدورات</a></li>
+                    <li class="nav-item auth-user" style="display:none"><a class="nav-link nav-link-custom text-blue-600" data-page="dashboard" href="#">مساحتي التعليمية 🚀</a></li>
+                    <li class="nav-item admin-only" style="display:none"><a class="nav-link nav-link-custom text-purple-600" data-page="admin-dashboard" href="#">لوحة الإدارة ⚙️</a></li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Guest View -->
+                    <div class="auth-guest d-flex gap-2">
+                        <button class="btn btn-outline-primary fw-bold rounded-xl px-4" data-bs-toggle="modal" data-bs-target="#loginModal">دخول</button>
+                    </div>
+
+                    <!-- User View -->
+                    <div class="auth-user align-items-center gap-2" style="display:none">
+                        <img id="userAvatarDisplay" src="" class="rounded-circle border border-2 border-white shadow-sm" width="40" height="40">
+                        <div class="lh-1 text-end d-none d-lg-block">
+                            <div id="userNameDisplay" class="fw-bold text-sm"></div>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-light btn-sm rounded-circle w-10 h-10 d-flex align-items-center justify-center text-red-400 hover:bg-red-50">
+                            <i data-lucide="log-out" width="16"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page: HOME -->
+    <div id="home" class="page-section active">
+        <div class="container py-5 text-center">
+            <div class="bg-white/60 p-5 p-md-5 rounded-[3rem] border-4 border-white shadow-lg inline-block w-100 max-w-4xl animate-float">
+                <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-bold border border-yellow-200 mb-4 inline-block">أهلاً بكم يا أبطال 👋</span>
+                <h1 class="display-3 fw-black font-heading mb-4 text-gray-800">اغرس <span class="text-green-500">المعرفة</span><br>واحصد المستقبل 🚀</h1>
+                <p class="lead text-gray-500 font-bold mb-5">منصة تفاعلية لتعليم البرمجة والذكاء الاصطناعي للأطفال.</p>
+                <button onclick="navigateTo('courses')" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-black shadow-pop-lg hover-bounce">ابدأ التعلم الآن</button>
+            </div>
+
+            <!-- Features -->
+            <div class="row mt-5 pt-5 g-4">
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded-[2rem] border-4 border-blue-100 shadow-sm hover-bounce">
+                        <div class="text-5xl mb-3">🎮</div>
+                        <h3 class="font-bold mb-2">تعلم باللعب</h3>
+                        <p class="text-gray-500 text-sm font-bold">حولنا الدروس لألعاب ممتعة وتحديات.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded-[2rem] border-4 border-purple-100 shadow-sm hover-bounce">
+                        <div class="text-5xl mb-3">🤖</div>
+                        <h3 class="font-bold mb-2">ذكاء اصطناعي</h3>
+                        <p class="text-gray-500 text-sm font-bold">نتعلم أحدث التقنيات بأسلوب مبسط.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="bg-white p-4 rounded-[2rem] border-4 border-orange-100 shadow-sm hover-bounce">
+                        <div class="text-5xl mb-3">🏆</div>
+                        <h3 class="font-bold mb-2">جوائز وشهادات</h3>
+                        <p class="text-gray-500 text-sm font-bold">اجمع النقاط واحصل على شهاداتك.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: COURSES CATALOG -->
+    <div id="courses" class="page-section">
+        <div class="container py-5">
+            <h2 class="text-center font-heading font-black mb-5 text-3xl">دوراتنا المتميزة 📚</h2>
+            <div id="coursesGrid" class="row">
+                <!-- JS will inject courses here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: COURSE DETAIL -->
+    <div id="course-detail" class="page-section">
+        <div id="courseDetailContent">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+
+    <!-- Page: DASHBOARD (STUDENT) -->
+    <div id="dashboard" class="page-section">
+        <div class="container py-5">
+            <div class="row mb-5" id="dashboardStats">
+                <!-- Stats injected here -->
+            </div>
+
+            <h3 class="font-heading font-bold mb-4 flex items-center gap-2">
+                <i data-lucide="book-open" class="text-green-500"></i>
+                دروسي الحالية
+            </h3>
+            <div class="row" id="myCoursesList">
+                <!-- Enrolled courses list -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: CLASSROOM (LESSON VIEW) -->
+    <div id="classroom" class="page-section bg-white min-vh-100">
+        <div class="d-flex h-100 flex-column flex-lg-row">
+            <!-- Sidebar -->
+            <div class="w-100 w-lg-25 border-start bg-gray-50 p-4 h-auto h-lg-100 overflow-auto">
+                <button onclick="navigateTo('dashboard')" class="btn btn-sm btn-outline-secondary mb-4 font-bold">خروج <i data-lucide="arrow-right" width="14"></i></button>
+                <h4 id="classroomTitle" class="font-black mb-4 font-heading">عنوان الدورة</h4>
+                <div id="lessonList"></div>
+            </div>
+            <!-- Content -->
+            <div class="flex-1 bg-black p-0 p-lg-4 d-flex align-items-center justify-content-center bg-dots">
+                <div id="lessonContentArea" class="w-100 max-w-4xl"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PAGES WRAPPER -->
+    <div id="admin-dashboard" class="page-section">
+        <div class="d-flex min-vh-100 bg-gray-100">
+            <!-- Sidebar -->
+            <div class="bg-gray-900 text-white p-4 w-64 d-none d-md-block">
+                <h4 class="font-bold mb-5 flex items-center gap-2"><i data-lucide="shield"></i> لوحة الإدارة</h4>
+                <div class="d-grid gap-2">
+                    <button onclick="navigateTo('admin-dashboard')" class="btn btn-dark text-end font-bold text-gray-300">الرئيسية</button>
+                    <button onclick="navigateTo('admin-users')" class="btn btn-dark text-end font-bold text-gray-300">المستخدمين</button>
+                    <button onclick="navigateTo('admin-courses')" class="btn btn-dark text-end font-bold text-gray-300">الدورات</button>
+                    <button id="adminLogoutBtn" class="btn btn-danger mt-5 font-bold">خروج</button>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 p-5 overflow-auto">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-200 text-center">
+                    <h2 class="font-black text-gray-800 mb-2">مرحباً أيها المدير 👋</h2>
+                    <p class="text-gray-500">اختر من القائمة الجانبية لإدارة المنصة.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-users" class="page-section">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between mb-4">
+                <h2 class="font-bold">إدارة المستخدمين</h2>
+                <button class="btn btn-primary font-bold rounded-xl" data-bs-toggle="modal" data-bs-target="#addUserModal">مستخدم جديد +</button>
+            </div>
+            <div class="bg-white rounded-3xl shadow-sm border p-4">
+                <table class="table">
+                    <thead><tr class="text-gray-400 font-bold text-xs"><th>الاسم</th><th>الدور</th><th>إجراء</th></tr></thead>
+                    <tbody id="adminUsersTable"></tbody>
+                </table>
+            </div>
+            <button onclick="navigateTo('admin-dashboard')" class="btn btn-link mt-3 font-bold">عودة</button>
+        </div>
+    </div>
+
+    <div id="admin-courses" class="page-section">
+        <div class="container py-5">
+            <div class="d-flex justify-content-between mb-4">
+                <h2 class="font-bold">إدارة الدورات</h2>
+                <button class="btn btn-primary font-bold rounded-xl" data-bs-toggle="modal" data-bs-target="#addCourseModal">دورة جديدة +</button>
+            </div>
+            <div class="row" id="adminCoursesGrid"></div>
+            <button onclick="navigateTo('admin-dashboard')" class="btn btn-link mt-3 font-bold">عودة</button>
+        </div>
+    </div>
+
+
+    <!-- MODALS -->
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-[2rem] border-0 shadow-lg overflow-hidden">
+                <div class="bg-blue-600 p-4 text-center">
+                    <h4 class="text-white font-black m-0">تسجيل الدخول</h4>
+                </div>
+                <div class="p-5 bg-white">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="fw-bold text-sm mb-1">البريد الإلكتروني</label>
+                            <input type="email" id="loginEmail" class="form-control rounded-xl p-3 bg-gray-50 border-0" value="student@gharas.sa" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="fw-bold text-sm mb-1">كلمة المرور</label>
+                            <input type="password" id="loginPassword" class="form-control rounded-xl p-3 bg-gray-50 border-0" value="123" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-xl fw-bold shadow-pop-colored">دخول 🚀</button>
+                        <div class="text-center mt-3 text-xs text-gray-400">
+                            جرب: admin@gharas.sa / 123
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-3xl p-4">
+                <h5 class="font-bold mb-4">إضافة مستخدم</h5>
+                <input id="userName" class="form-control mb-2 rounded-xl" placeholder="الاسم">
+                <input id="userEmail" class="form-control mb-2 rounded-xl" placeholder="البريد">
+                <input id="userPassword" class="form-control mb-2 rounded-xl" placeholder="كلمة المرور">
+                <select id="userRole" class="form-select mb-3 rounded-xl">
+                    <option value="student">طالب</option>
+                    <option value="admin">مدير</option>
+                </select>
+                <button id="saveUserBtn" class="btn btn-success rounded-xl font-bold">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div class="modal fade" id="addCourseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-3xl p-4">
+                <h5 class="font-bold mb-4">إضافة دورة</h5>
+                <input id="courseTitle" class="form-control mb-2 rounded-xl" placeholder="عنوان الدورة">
+                <input id="coursePrice" type="number" class="form-control mb-2 rounded-xl" placeholder="السعر">
+                <select id="courseCategory" class="form-select mb-3 rounded-xl">
+                    <option value="برمجة">برمجة</option>
+                    <option value="تصميم">تصميم</option>
+                </select>
+                <button id="saveCourseBtn" class="btn btn-success rounded-xl font-bold">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="main.js"></script>
+</body>
 </html>
