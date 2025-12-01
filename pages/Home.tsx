@@ -1,15 +1,18 @@
+
 import React, { useEffect, useState } from 'react';
 import { Sparkles, BookOpen, Trophy, Monitor, Smile, Shield, CheckCircle, ChevronDown, Quote } from 'lucide-react';
 import { SiteConfig } from '../types';
 import { TotarService } from '../services/totarService';
 import Hero from '../components/Hero';
+import { Language } from '../translations';
 
 interface HomeProps {
   onStart: () => void;
   onBrowse: () => void;
+  lang: Language;
 }
 
-const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
+const Home: React.FC<HomeProps> = ({ onStart, onBrowse, lang }) => {
   const [config, setConfig] = useState<SiteConfig | null>(null);
   const [openFaq, setOpenFaq] = useState<string | null>(null);
 

@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { User } from '../types';
-import { Leaf, LogIn, LogOut, Menu, X, User as UserIcon, Settings } from 'lucide-react';
+import { Leaf, LogIn, LogOut, Menu, X, User as UserIcon, Settings, Languages } from 'lucide-react';
+import { translations, Language } from '../translations';
 
 interface NavbarProps {
   user: User | null;
@@ -8,11 +10,14 @@ interface NavbarProps {
   onLogout: () => void;
   onNavigate: (page: string) => void;
   currentPage: string;
+  lang: Language;
+  setLang: (lang: Language) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, currentPage }) => {
+const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, currentPage, lang, setLang }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [showDropdown, setShowDropdown] = React.useState(false);
+  const t = translations[lang].nav;
 
   const NavLink = ({ page, label, icon, color = 'hover:text-gharas-600' }: { page: string; label: string, icon?: React.ReactNode, color?: string }) => (
     <button
@@ -32,7 +37,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
   );
 
   return (
-    <nav className="sticky top-4 z-50 px-4 mb-4">
+    <nav className="sticky top-4 z-50 px-4 mb-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto bg-white/90 backdrop-blur-md rounded-[2rem] shadow-xl border-4 border-white/50 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-24 items-center">
           {/* Logo */}
@@ -40,16 +45,26 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
             <div className="bg-gharas-500 p-3 rounded-2xl text-white shadow-pop-colored text-gharas-500 group-hover:animate-wiggle transform -rotate-6">
               <Leaf size={28} strokeWidth={3} />
             </div>
-            <span className="text-3xl font-heading font-black text-gharas-600 tracking-tight drop-shadow-sm group-hover:scale-105 transition-transform">غرس</span>
+            <span className="text-3xl font-heading font-black text-gharas-600 tracking-tight drop-shadow-sm group-hover:scale-105 transition-transform">
+                {lang === 'ar' ? 'غرس' : 'Gharas'}
+            </span>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden xl:flex items-center gap-2">
-            <NavLink page="home" label="الرئيسية" color="hover:text-kid-blue" />
-            <NavLink page="courses" label="الدورات" color="hover:text-kid-purple" />
-            <NavLink page="paths" label="المسارات" color="hover:text-kid-pink" />
-            <NavLink page="tutor" label="المرشد الذكي" icon={<span className="text-xl animate-bounce">🤖</span>} />
+            <NavLink page="home" label={t.home} color="hover:text-kid-blue" />
+            <NavLink page="courses" label={t.courses} color="hover:text-kid-purple" />
+            <NavLink page="paths" label={t.paths} color="hover:text-kid-pink" />
+            <NavLink page="tutor" label={t.tutor} icon={<span className="text-xl animate-bounce">🤖</span>} />
             
+            <button 
+                onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+                className="mx-2 p-2 rounded-xl hover:bg-gray-100 text-gray-500 font-bold flex items-center gap-1 border-2 border-transparent hover:border-gray-200"
+            >
+                <Languages size={20} />
+                {lang === 'ar' ? 'EN' : 'عربي'}
+            </button>
+
             <div className="h-8 w-px bg-gray-200 mx-2 rounded-full"></div>
 
             {user ? (
@@ -59,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
                     onClick={() => setShowDropdown(!showDropdown)}
                 >
                     <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-white" />
-                    <div className="text-right hidden xl:block">
+                    <div className={`text-${lang === 'ar' ? 'right' : 'left'} hidden xl:block`}>
                         <p className="font-bold text-gray-800 leading-none text-sm">{user.name}</p>
                         <div className="flex items-center gap-1 mt-0.5">
                             <span className="text-[10px] bg-kid-yellow px-1.5 rounded-md font-bold text-gray-700">⭐ {user.points}</span>
@@ -70,17 +85,17 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
                 {showDropdown && (
                     <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
-                        <div className="absolute left-0 mt-4 w-56 bg-white rounded-3xl shadow-xl border-2 border-gray-100 overflow-hidden z-20 animate-float">
+                        <div className={`absolute ${lang === 'ar' ? 'left-0' : 'right-0'} mt-4 w-56 bg-white rounded-3xl shadow-xl border-2 border-gray-100 overflow-hidden z-20 animate-float`}>
                             <div className="p-2 space-y-1">
-                                <button onClick={() => { onNavigate('profile'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors">
-                                    <div className="bg-blue-100 p-1.5 rounded-lg text-blue-500"><UserIcon size={16} /></div> الملف الشخصي
+                                <button onClick={() => { onNavigate('profile'); setShowDropdown(false); }} className={`w-full text-${lang === 'ar' ? 'right' : 'left'} px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors`}>
+                                    <div className="bg-blue-100 p-1.5 rounded-lg text-blue-500"><UserIcon size={16} /></div> {t.profile}
                                 </button>
-                                <button onClick={() => { onNavigate('settings'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors">
-                                    <div className="bg-purple-100 p-1.5 rounded-lg text-purple-500"><Settings size={16} /></div> الإعدادات
+                                <button onClick={() => { onNavigate('settings'); setShowDropdown(false); }} className={`w-full text-${lang === 'ar' ? 'right' : 'left'} px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors`}>
+                                    <div className="bg-purple-100 p-1.5 rounded-lg text-purple-500"><Settings size={16} /></div> {t.settings}
                                 </button>
                                 <div className="border-t border-gray-100 my-1"></div>
-                                <button onClick={() => { onLogout(); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl flex items-center gap-2 transition-colors">
-                                    <div className="bg-red-100 p-1.5 rounded-lg text-red-500"><LogOut size={16} /></div> خروج
+                                <button onClick={() => { onLogout(); setShowDropdown(false); }} className={`w-full text-${lang === 'ar' ? 'right' : 'left'} px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl flex items-center gap-2 transition-colors`}>
+                                    <div className="bg-red-100 p-1.5 rounded-lg text-red-500"><LogOut size={16} /></div> {t.logout}
                                 </button>
                             </div>
                         </div>
@@ -93,13 +108,19 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
                 className="flex items-center gap-2 bg-kid-purple text-white px-6 py-3 rounded-2xl font-bold text-lg shadow-pop-colored text-kid-purple hover:-translate-y-1 transition-transform border-2 border-transparent"
               >
                 <LogIn size={20} strokeWidth={3} />
-                دخول
+                {t.login}
               </button>
             )}
           </div>
 
           {/* Mobile Button */}
-          <div className="xl:hidden flex items-center">
+          <div className="xl:hidden flex items-center gap-2">
+            <button 
+                onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+                className="p-2 rounded-xl bg-gray-50 text-gray-500 font-bold border border-gray-200"
+            >
+                {lang === 'ar' ? 'EN' : 'AR'}
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gharas-600 bg-gharas-50 p-3 rounded-2xl hover:bg-gharas-100 transition-colors"
@@ -113,10 +134,10 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
       {/* Mobile Menu */}
       {isOpen && (
         <div className="xl:hidden mt-4 bg-white/95 backdrop-blur-xl border-2 border-white rounded-[2rem] p-6 space-y-3 shadow-2xl relative z-40 mx-auto max-w-lg">
-          <NavLink page="home" label="🏠 الرئيسية" />
-          <NavLink page="courses" label="📚 الدورات" />
-          <NavLink page="paths" label="🚀 المسارات" />
-          <NavLink page="tutor" label="🤖 المرشد الذكي" />
+          <NavLink page="home" label={`🏠 ${t.home}`} />
+          <NavLink page="courses" label={`📚 ${t.courses}`} />
+          <NavLink page="paths" label={`🚀 ${t.paths}`} />
+          <NavLink page="tutor" label={`🤖 ${t.tutor}`} />
           
           <div className="border-t-2 border-dashed border-gray-200 pt-4 mt-2">
              {user ? (
@@ -125,17 +146,17 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
                    <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
                    <div>
                        <span className="font-black text-gray-800 block text-lg">{user.name}</span>
-                       <span className="text-sm font-bold text-kid-blue bg-white px-2 rounded-full inline-block mt-1">⭐ {user.points} نقطة</span>
+                       <span className="text-sm font-bold text-kid-blue bg-white px-2 rounded-full inline-block mt-1">⭐ {user.points} {t.points}</span>
                    </div>
                 </div>
                 <button onClick={() => { onNavigate('profile'); setIsOpen(false); }} className="w-full text-right p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold flex items-center gap-3">
-                    <UserIcon size={20} className="text-blue-500" /> الملف الشخصي
+                    <UserIcon size={20} className="text-blue-500" /> {t.profile}
                 </button>
                 <button onClick={() => { onNavigate('settings'); setIsOpen(false); }} className="w-full text-right p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold flex items-center gap-3">
-                    <Settings size={20} className="text-purple-500" /> الإعدادات
+                    <Settings size={20} className="text-purple-500" /> {t.settings}
                 </button>
                 <button onClick={onLogout} className="w-full text-right p-4 rounded-2xl bg-red-50 hover:bg-red-100 text-red-500 font-bold flex items-center gap-3">
-                    <LogOut size={20} /> خروج
+                    <LogOut size={20} /> {t.logout}
                 </button>
               </div>
             ) : (
@@ -143,7 +164,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
                 onClick={() => { onLogin(); setIsOpen(false); }}
                 className="w-full text-center bg-kid-green text-white py-4 rounded-2xl font-black text-xl shadow-pop-colored text-kid-green hover:brightness-105"
               >
-                ابدأ رحلتك الآن! 🚀
+                {t.start}
               </button>
             )}
           </div>

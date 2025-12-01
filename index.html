@@ -1,20 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>منصة غرس التعليمية</title>
+    <title>Gharas Platform | منصة غرس التعليمية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@500;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Cairo', 'sans-serif'],
-              heading: ['Tajawal', 'sans-serif'],
+              sans: ['Cairo', 'Nunito', 'sans-serif'],
+              heading: ['Tajawal', 'Nunito', 'sans-serif'],
+              en: ['Nunito', 'sans-serif'],
             },
             colors: {
               gharas: {
@@ -68,11 +70,16 @@
     </script>
     <style>
       body {
-        font-family: 'Cairo', sans-serif;
+        font-family: 'Cairo', 'Nunito', sans-serif;
         background-color: #F0F9FF; /* Kid BG */
         background-image: radial-gradient(#E0F2FE 15%, transparent 16%), radial-gradient(#E0F2FE 15%, transparent 16%);
         background-size: 60px 60px;
         background-position: 0 0, 30px 30px;
+      }
+      
+      /* RTL/LTR Support for mixed content */
+      [dir="ltr"] body {
+        font-family: 'Nunito', 'Cairo', sans-serif;
       }
       
       /* Custom scrollbar for kid-friendly look */

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -22,6 +22,7 @@ import AdminContent from './pages/admin/AdminContent';
 import { User, Course } from './types';
 import { TotarService } from './services/totarService';
 import { Loader2 } from 'lucide-react';
+import { translations, Language } from './translations';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
@@ -29,8 +30,17 @@ const App: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [detailCourseId, setDetailCourseId] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [lang, setLang] = useState<Language>('ar');
 
-  // Called when user successfully logs in from Login Page
+  // Update HTML dir and lang attributes
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  }, [lang]);
+
+  // Current translation object
+  const t = translations[lang];
+
   const handleLoginSuccess = (userData: User) => {
     setUser(userData);
     if (userData.role === 'admin') {
@@ -55,14 +65,11 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
-  // When clicking a card in Catalog or Dashboard
   const handleCourseClick = (course: Course) => {
-    // If user is enrolled, go to Lesson view
     if (user && user.enrolledCourseIds.includes(course.id)) {
         setSelectedCourse(course);
         setCurrentPage('lesson');
     } else {
-        // Otherwise go to Sales Page (Detail)
         setDetailCourseId(course.id);
         setCurrentPage('courseDetail');
     }
@@ -73,20 +80,17 @@ const App: React.FC = () => {
         navigateTo('login');
         return;
     }
-    // Simulate enrollment
     setIsLoggingIn(true);
     await TotarService.enrollInCourse(course.id);
-    // Refresh user data mock
     const updatedUser = { ...user, enrolledCourseIds: [...user.enrolledCourseIds, course.id] };
     setUser(updatedUser);
     setIsLoggingIn(false);
     
-    // Go to lesson
     setSelectedCourse(course);
     setCurrentPage('lesson');
   };
 
-  // --- ADMIN ROUTING CHECK ---
+  // --- ADMIN ROUTING ---
   if (user?.role === 'admin' && currentPage.startsWith('admin_')) {
       return (
           <AdminLayout user={user} onLogout={handleLogout} onNavigate={navigateTo} currentPage={currentPage}>
@@ -94,18 +98,18 @@ const App: React.FC = () => {
               {currentPage === 'admin_users' && <AdminUsers />}
               {currentPage === 'admin_courses' && <AdminCourses />}
               {currentPage === 'admin_content' && <AdminContent />}
-              {currentPage === 'admin_reports' && <div className="text-center py-20 text-gray-400">صفحة التقارير قيد التطوير...</div>}
+              {currentPage === 'admin_reports' && <div className="text-center py-20 text-gray-400">Under Construction...</div>}
           </AdminLayout>
       );
   }
 
-  // --- STUDENT / PUBLIC ROUTING ---
+  // --- PUBLIC ROUTING ---
   const renderContent = () => {
     if (isLoggingIn) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[80vh] bg-slate-50">
           <Loader2 size={48} className="text-gharas-500 animate-spin mb-4" />
-          <h2 className="text-xl font-bold text-gray-700">جاري المعالجة...</h2>
+          <h2 className="text-xl font-bold text-gray-700">{t.common.loading}</h2>
         </div>
       );
     }
@@ -116,7 +120,7 @@ const App: React.FC = () => {
 
     switch (currentPage) {
       case 'home':
-        return <Home onStart={() => user ? navigateTo('dashboard') : navigateTo('login')} onBrowse={() => navigateTo('courses')} />;
+        return <Home onStart={() => user ? navigateTo('dashboard') : navigateTo('login')} onBrowse={() => navigateTo('courses')} lang={lang} />;
       case 'about':
         return <About />;
       case 'contact':
@@ -137,7 +141,7 @@ const App: React.FC = () => {
                 user={user} 
                 onSelectCourse={(c) => { setSelectedCourse(c); setCurrentPage('lesson'); }} 
             />
-        ) : <Home onStart={() => navigateTo('login')} onBrowse={() => navigateTo('courses')} />;
+        ) : <Home onStart={() => navigateTo('login')} onBrowse={() => navigateTo('courses')} lang={lang} />;
       case 'profile':
         return user ? <Profile user={user} onUpdate={handleUpdateUser} /> : <Login onSuccess={handleLoginSuccess} onRegisterClick={() => navigateTo('register')} />;
       case 'settings':
@@ -146,22 +150,21 @@ const App: React.FC = () => {
         return (
           <div className="py-12 px-4 bg-slate-50 min-h-screen">
              <div className="text-center mb-8">
-                <h1 className="text-3xl font-heading font-bold text-gray-800 mb-2">اسأل معلمك الذكي</h1>
-                <p className="text-gray-500">هل واجهت صعوبة في درس؟ غرس هنا للمساعدة!</p>
+                <h1 className="text-3xl font-heading font-bold text-gray-800 mb-2">{t.nav.tutor}</h1>
+                <p className="text-gray-500">Ask your AI companion anything!</p>
              </div>
              <AITutor user={user} />
           </div>
         );
       default:
-        // If logged in as admin but trying to access non-admin page, let them (frontend view)
-        return <Home onStart={() => navigateTo('login')} onBrowse={() => navigateTo('courses')} />;
+        return <Home onStart={() => navigateTo('login')} onBrowse={() => navigateTo('courses')} lang={lang} />;
     }
   };
 
   const isAuthPage = currentPage === 'login' || currentPage === 'register';
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className={`min-h-screen flex flex-col font-sans ${lang === 'en' ? 'font-en' : ''}`}>
       {currentPage !== 'lesson' && !isAuthPage && (
         <Navbar 
           user={user} 
@@ -169,6 +172,8 @@ const App: React.FC = () => {
           onLogout={handleLogout} 
           onNavigate={navigateTo}
           currentPage={currentPage}
+          lang={lang}
+          setLang={setLang}
         />
       )}
       
@@ -176,7 +181,6 @@ const App: React.FC = () => {
         {renderContent()}
       </main>
 
-      {/* Footer - Only show on main pages */}
       {currentPage !== 'lesson' && !isLoggingIn && !isAuthPage && (
         <Footer onNavigate={navigateTo} />
       )}
