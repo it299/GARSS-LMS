@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Course, Module, Lesson } from '../types';
 import { ArrowRight, Play, CheckCircle, FileText, Lock, AlertCircle, ExternalLink } from 'lucide-react';
 import { TotarService } from '../services/totarService';
@@ -13,6 +13,14 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
   const [activeModule, setActiveModule] = useState<Module | null>(course.modules[0] || null);
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(course.modules[0]?.lessons[0] || null);
   const [isCompleted, setIsCompleted] = useState(false);
+
+  // Update state if course changes or is loaded
+  useEffect(() => {
+    if (course && course.modules.length > 0) {
+        if (!activeModule) setActiveModule(course.modules[0]);
+        if (!activeLesson) setActiveLesson(course.modules[0].lessons[0]);
+    }
+  }, [course]);
 
   const handleLessonSelect = (module: Module, lesson: Lesson) => {
     setActiveModule(module);
@@ -28,84 +36,56 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
 
   const getYouTubeId = (url: string) => {
     if (!url) return null;
-    // Regex matches: youtube.com/watch?v=ID, youtube.com/embed/ID, youtu.be/ID
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  const renderContent = () => {
-      if (!activeLesson) return null;
+  const renderVideoPlayer = (lesson: Lesson) => {
+      const videoId = getYouTubeId(lesson.content);
 
-      if (activeLesson.type === 'video') {
-          const videoId = getYouTubeId(activeLesson.content);
-          
-          if (videoId) {
-              return (
-                 <div key={activeLesson.id} className="w-full h-full flex items-center justify-center bg-black relative group">
-                     <iframe 
-                        width="100%" 
-                        height="100%" 
-                        src={`https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&origin=${window.location.origin}`}
-                        title={activeLesson.title}
-                        frameBorder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowFullScreen
-                        className="w-full h-full"
-                     ></iframe>
-                 </div>
-              );
-          }
-          
-          // Check for direct video files
-          if (activeLesson.content.match(/\.(mp4|webm|ogg)$/i)) {
-              return (
-                 <div key={activeLesson.id} className="w-full h-full flex items-center justify-center bg-black relative group">
-                     <video controls className="w-full h-full max-h-full" autoPlay>
-                         <source src={activeLesson.content} />
-                         متصفحك لا يدعم تشغيل الفيديو.
-                     </video>
-                 </div>
-              );
-          }
-
-          // Fallback for unplayable/unknown links
+      if (videoId) {
           return (
-             <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white p-6 text-center">
-                 <AlertCircle size={64} className="mb-4 text-red-400 opacity-80" />
-                 <h3 className="text-2xl font-bold mb-2 font-heading">تعذر تشغيل الفيديو داخل المنصة</h3>
-                 <p className="text-gray-400 mb-8 max-w-md text-lg">قد يكون الرابط محظوراً من التضمين أو يحتاج لفتح مباشر.</p>
-                 <a 
-                    href={activeLesson.content} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="bg-kid-blue hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 transition-all transform hover:scale-105 shadow-lg border-2 border-white/20"
-                 >
-                    <ExternalLink size={20} />
-                    فتح الرابط في نافذة جديدة
-                 </a>
-             </div>
-           );
+             <iframe 
+                key={lesson.id}
+                width="100%" 
+                height="100%" 
+                src={`https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&modestbranding=1`}
+                title={lesson.title}
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+                className="w-full h-full absolute inset-0"
+             ></iframe>
+          );
+      }
+      
+      // Direct video file (MP4, etc.)
+      if (lesson.content.match(/\.(mp4|webm|ogg)$/i)) {
+          return (
+             <video key={lesson.id} controls className="w-full h-full max-h-full bg-black" autoPlay>
+                 <source src={lesson.content} />
+                 متصفحك لا يدعم تشغيل الفيديو.
+             </video>
+          );
       }
 
-      // Reading Content
+      // Fallback
       return (
-          <div key={activeLesson.id} className="w-full h-full p-8 md:p-12 bg-orange-50 overflow-y-auto">
-             <div className="max-w-3xl mx-auto bg-white p-8 rounded-[2rem] shadow-sm border border-orange-100 min-h-full">
-                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-                    <div className="bg-orange-100 p-3 rounded-2xl text-orange-500">
-                        <FileText size={32} />
-                    </div>
-                    <h3 className="text-3xl font-heading font-black text-gray-800">{activeLesson.title}</h3>
-                </div>
-                <div className="prose prose-lg text-gray-600 leading-loose font-medium">
-                    {activeLesson.content.split('\n').map((paragraph, idx) => (
-                        <p key={idx} className="mb-4">{paragraph}</p>
-                    ))}
-                </div>
-             </div>
-          </div>
-      );
+         <div className="w-full h-full flex flex-col items-center justify-center text-white p-6 text-center bg-gray-900">
+             <AlertCircle size={64} className="mb-4 text-gray-500" />
+             <h3 className="text-xl font-bold mb-2">نوع الفيديو غير مدعوم أو الرابط خارجي</h3>
+             <a 
+                href={lesson.content} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="mt-4 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors"
+             >
+                <ExternalLink size={18} />
+                فتح الرابط في نافذة جديدة
+             </a>
+         </div>
+       );
   };
 
   if (!activeModule || !activeLesson) {
@@ -116,12 +96,12 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
                 <Lock size={40} />
             </div>
             <h2 className="text-3xl font-heading font-black text-gray-800 mb-4">لا يوجد محتوى بعد! 🚧</h2>
-            <p className="text-gray-500 font-bold text-lg mb-8">لم يتم إضافة دروس لهذه الدورة حتى الآن. يرجى العودة لاحقاً.</p>
+            <p className="text-gray-500 font-bold text-lg mb-8">لم يتم إضافة دروس لهذه الدورة حتى الآن.</p>
             <button 
                 onClick={onBack} 
                 className="bg-gharas-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gharas-700 shadow-lg transition-transform hover:-translate-y-1"
             >
-                العودة للوحة التحكم
+                العودة
             </button>
         </div>
       </div>
@@ -131,7 +111,7 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-white overflow-hidden">
       {/* Sidebar - Course Content */}
-      <div className="w-full lg:w-96 border-l border-gray-200 bg-white flex flex-col h-[40vh] lg:h-full shadow-xl z-10 relative">
+      <div className="w-full lg:w-96 border-l border-gray-200 bg-white flex flex-col h-[40vh] lg:h-full shadow-xl z-20 relative order-2 lg:order-1">
         <div className="p-5 border-b border-gray-100 bg-white">
           <button 
             onClick={onBack}
@@ -181,7 +161,6 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
                              {lesson.title}
                          </p>
                      </div>
-                     <span className="text-[10px] text-gray-400 font-bold bg-white px-1.5 py-0.5 rounded border border-gray-100">{lesson.duration}</span>
                   </button>
                 ))}
               </div>
@@ -191,43 +170,44 @@ const LessonView: React.FC<LessonViewProps> = ({ course, onBack }) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-[60vh] lg:h-full bg-black relative">
-         <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-hidden">
-             {/* The Video Container */}
-             <div className="w-full h-full bg-black shadow-2xl relative">
-                  {renderContent()}
-             </div>
+      <div className="flex-1 flex flex-col h-[60vh] lg:h-full bg-black relative order-1 lg:order-2">
+         <div className="flex-1 bg-black flex items-center justify-center overflow-hidden relative">
+             {activeLesson.type === 'video' ? (
+                renderVideoPlayer(activeLesson)
+             ) : (
+                <div key={activeLesson.id} className="w-full h-full p-8 bg-orange-50 overflow-y-auto">
+                    <div className="max-w-3xl mx-auto bg-white p-8 rounded-[2rem] shadow-sm border border-orange-100 min-h-full">
+                        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                            <div className="bg-orange-100 p-3 rounded-2xl text-orange-500">
+                                <FileText size={32} />
+                            </div>
+                            <h3 className="text-3xl font-heading font-black text-gray-800">{activeLesson.title}</h3>
+                        </div>
+                        <div className="prose prose-lg text-gray-600 leading-loose font-medium">
+                            {activeLesson.content.split('\n').map((paragraph, idx) => (
+                                <p key={idx} className="mb-4">{paragraph}</p>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+             )}
          </div>
          
          {/* Controls Footer */}
-         <div className="bg-white p-4 md:p-6 border-t border-gray-100 flex items-center justify-between shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] relative z-20">
+         <div className="bg-white p-4 border-t border-gray-100 flex items-center justify-between shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-30">
               <div className="hidden md:block">
                   <h1 className="text-lg font-black text-gray-800">{activeLesson.title}</h1>
                   <p className="text-sm text-gray-400 font-bold">{activeModule.title}</p>
               </div>
               
               <div className="flex gap-3 w-full md:w-auto justify-between md:justify-end">
-                <button className="px-6 py-3 rounded-xl border-2 border-gray-100 text-gray-500 text-sm font-bold hover:bg-gray-50 transition-colors">
-                    السابق
-                </button>
-                
-                {!isCompleted ? (
-                    <button 
-                        onClick={handleComplete}
-                        className="px-8 py-3 bg-gharas-600 text-white text-sm font-bold rounded-xl hover:bg-gharas-700 hover:-translate-y-1 transition-all shadow-pop-colored text-gharas-600 flex items-center gap-2"
-                    >
-                        <CheckCircle size={18} />
-                        أكملت الدرس
-                    </button>
-                ) : (
-                    <button disabled className="px-8 py-3 bg-green-50 text-green-600 text-sm font-bold rounded-xl cursor-default flex items-center gap-2 border-2 border-green-100">
-                        <CheckCircle size={18} />
-                        تم الإكمال
-                    </button>
-                )}
-
-                <button className="px-6 py-3 rounded-xl bg-kid-blue text-white text-sm font-bold hover:bg-blue-600 shadow-pop-colored text-kid-blue transition-all">
-                    التالي
+                <button 
+                    onClick={handleComplete}
+                    disabled={isCompleted}
+                    className={`px-6 py-3 text-sm font-bold rounded-xl flex items-center gap-2 transition-all ${isCompleted ? 'bg-green-100 text-green-600 cursor-default' : 'bg-gharas-600 text-white hover:bg-gharas-700 shadow-lg'}`}
+                >
+                    <CheckCircle size={18} />
+                    {isCompleted ? 'مكتمل' : 'أكملت الدرس'}
                 </button>
               </div>
          </div>

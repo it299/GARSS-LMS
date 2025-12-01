@@ -4,7 +4,7 @@ import App from './App';
 import { AlertCircle } from 'lucide-react';
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -13,10 +13,7 @@ interface ErrorBoundaryState {
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+  public state: ErrorBoundaryState = { hasError: false, error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -29,20 +26,29 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'system-ui' }}>
-          <div style={{ color: '#ef4444', marginBottom: '1rem' }}>
-            <AlertCircle size={48} style={{ margin: '0 auto' }} />
+        <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'sans-serif', direction: 'rtl' }}>
+          <div style={{ color: '#ef4444', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <AlertCircle size={48} />
           </div>
-          <h1>Oops! Something went wrong.</h1>
-          <h2 dir="rtl">عذراً، حدث خطأ ما في تشغيل الموقع.</h2>
-          <p style={{ color: '#666', marginTop: '1rem' }}>
-            {this.state.error?.message}
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>عذراً، حدث خطأ غير متوقع</h1>
+          <p style={{ color: '#666', marginBottom: '1rem' }}>
+            {this.state.error?.message || 'Unknown Error'}
           </p>
           <button 
             onClick={() => window.location.reload()}
-            style={{ marginTop: '1rem', padding: '10px 20px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}
+            style={{ 
+              marginTop: '1rem', 
+              padding: '12px 24px', 
+              background: '#22c55e', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '12px', 
+              cursor: 'pointer', 
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}
           >
-            Reload / تحديث الصفحة
+            تحديث الصفحة
           </button>
         </div>
       );
