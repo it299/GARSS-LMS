@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
-import { Sparkles, BookOpen, Trophy, Monitor, Smile, Shield, CheckCircle, ChevronDown, User, Quote } from 'lucide-react';
+import { Sparkles, BookOpen, Trophy, Monitor, Smile, Shield, CheckCircle, ChevronDown, Quote } from 'lucide-react';
 import { SiteConfig } from '../types';
 import { TotarService } from '../services/totarService';
+import Hero from '../components/Hero';
 
 interface HomeProps {
   onStart: () => void;
@@ -17,7 +17,7 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
     TotarService.getSiteConfig().then(setConfig);
   }, []);
 
-  if (!config) return <div className="h-screen flex items-center justify-center"><div className="animate-spin w-12 h-12 border-4 border-gharas-500 rounded-full border-t-transparent"></div></div>;
+  if (!config) return <div className="h-screen flex items-center justify-center"><div className="animate-spin w-16 h-16 border-8 border-kid-blue border-t-transparent rounded-full"></div></div>;
 
   const iconMap: any = {
       Monitor: Monitor,
@@ -27,95 +27,61 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
   };
 
   return (
-    <div className="bg-white">
+    <div className="overflow-x-hidden">
       {/* HERO SECTION */}
-      <div className="relative overflow-hidden bg-white">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-30 pointer-events-none">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-playful-yellow rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
-            <div className="absolute bottom-10 right-10 w-40 h-40 bg-playful-blue rounded-full blur-3xl mix-blend-multiply animate-bounce" style={{ animationDuration: '3s' }}></div>
-            <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-playful-purple rounded-full blur-3xl mix-blend-multiply"></div>
-        </div>
+      <Hero onStart={onStart} />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-12 pb-20 lg:pt-24">
-            <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gharas-100 text-gharas-700 text-sm font-bold mb-6 border border-gharas-200 shadow-sm animate-fade-in-up">
-                <Sparkles size={16} className="text-playful-yellow fill-playful-yellow" />
-                منصة التعليم التقني الأولى للأطفال
-            </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-extrabold text-gray-900 tracking-tight mb-8 leading-tight">
-                {config.hero.title}
-            </h1>
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600 leading-relaxed font-medium">
-                {config.hero.subtitle}
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-                <button
-                onClick={onStart}
-                className="px-8 py-4 bg-gharas-600 text-white text-lg font-bold rounded-2xl shadow-lg shadow-gharas-200 hover:bg-gharas-700 hover:scale-105 transition-all flex items-center justify-center gap-2"
-                >
-                <BookOpen size={24} />
-                {config.hero.ctaText}
-                </button>
-                <button 
-                  onClick={onBrowse}
-                  className="px-8 py-4 bg-white text-gharas-700 text-lg font-bold rounded-2xl shadow-md border border-gray-100 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-                >
-                <Trophy size={24} className="text-playful-yellow" />
-                تصفح الدورات
-                </button>
-            </div>
-            </div>
-        </div>
-      </div>
-
-      {/* STATS STRIP */}
-      <div className="bg-gharas-600 py-10">
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gharas-500 divide-x-reverse">
-              <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-1">{config.stats.students}</div>
-                  <div className="text-gharas-100 font-bold">طالب مسجل</div>
-              </div>
-              <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-1">{config.stats.courses}</div>
-                  <div className="text-gharas-100 font-bold">دورة تدريبية</div>
-              </div>
-              <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-1">{config.stats.partners}</div>
-                  <div className="text-gharas-100 font-bold">شريك تعليمي</div>
-              </div>
-              <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-1">{config.stats.satisfaction}</div>
-                  <div className="text-gharas-100 font-bold">رضا العملاء</div>
+      {/* STATS STRIP - Floating Cards */}
+      <div className="py-10 px-4">
+          <div className="max-w-6xl mx-auto bg-gharas-600 rounded-[3rem] p-8 md:p-12 shadow-pop-lg shadow-green-800 border-4 border-white relative overflow-hidden">
+              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+              <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gharas-500 divide-x-reverse">
+                  <div>
+                      <div className="text-4xl md:text-5xl font-heading font-black text-white mb-2 drop-shadow-md">{config.stats.students}</div>
+                      <div className="text-gharas-100 font-bold text-lg">بطل وبطلة 🦸‍♂️</div>
+                  </div>
+                  <div>
+                      <div className="text-4xl md:text-5xl font-heading font-black text-white mb-2 drop-shadow-md">{config.stats.courses}</div>
+                      <div className="text-gharas-100 font-bold text-lg">مغامرة تعليمية 🗺️</div>
+                  </div>
+                  <div>
+                      <div className="text-4xl md:text-5xl font-heading font-black text-white mb-2 drop-shadow-md">{config.stats.partners}</div>
+                      <div className="text-gharas-100 font-bold text-lg">شريك نجاح 🤝</div>
+                  </div>
+                  <div>
+                      <div className="text-4xl md:text-5xl font-heading font-black text-white mb-2 drop-shadow-md">{config.stats.satisfaction}</div>
+                      <div className="text-gharas-100 font-bold text-lg">أحبونا ❤️</div>
+                  </div>
               </div>
           </div>
       </div>
 
       {/* FEATURES SECTION */}
-      <div className="py-20 bg-slate-50">
+      <div className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-                <h2 className="text-3xl font-heading font-bold text-gray-900">لماذا غرس؟</h2>
-                <div className="w-20 h-2 bg-gharas-400 rounded-full mx-auto mt-4"></div>
+                <span className="bg-kid-yellow px-4 py-1 rounded-full font-bold text-gray-800 border-2 border-yellow-400">مميزاتنا</span>
+                <h2 className="text-4xl font-heading font-black text-gray-900 mt-4">لماذا يحب الأطفال غرس؟</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {config.features.map((item, idx) => {
                     const Icon = iconMap[item.icon] || Monitor;
-                    const colors = [
-                        { text: 'text-blue-500', bg: 'bg-blue-50' },
-                        { text: 'text-green-500', bg: 'bg-green-50' },
-                        { text: 'text-yellow-500', bg: 'bg-yellow-50' },
-                        { text: 'text-purple-500', bg: 'bg-purple-50' }
+                    const styles = [
+                        { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-500', shadow: 'shadow-blue-200' },
+                        { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-500', shadow: 'shadow-green-200' },
+                        { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-500', shadow: 'shadow-yellow-200' },
+                        { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-500', shadow: 'shadow-purple-200' }
                     ];
-                    const color = colors[idx % colors.length];
+                    const style = styles[idx % styles.length];
 
                     return (
-                        <div key={idx} className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-shadow text-center group">
-                            <div className={`w-20 h-20 mx-auto rounded-full ${color.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                                <Icon size={36} className={color.text} />
+                        <div key={idx} className={`bg-white p-8 rounded-[2.5rem] border-4 ${style.border} shadow-pop group hover:-translate-y-2 transition-transform`}>
+                            <div className={`w-20 h-20 mx-auto rounded-3xl ${style.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border-2 ${style.border}`}>
+                                <Icon size={40} className={style.text} strokeWidth={2.5} />
                             </div>
-                            <h3 className="text-xl font-bold text-gray-800 mb-3">{item.title}</h3>
-                            <p className="text-gray-500">{item.description}</p>
+                            <h3 className="text-2xl font-black text-gray-800 mb-3 text-center">{item.title}</h3>
+                            <p className="text-gray-500 text-center font-bold leading-relaxed">{item.description}</p>
                         </div>
                     );
                 })}
@@ -123,50 +89,52 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
         </div>
       </div>
 
-      {/* LEARNING PREVIEW (Visual) */}
-      <div className="py-20 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-12">
-            <div className="lg:w-1/2">
-                <div className="relative">
-                    <img 
-                        src={config.hero.image || "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=1000&auto=format&fit=crop"} 
-                        alt="Kid learning" 
-                        className="rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 border-8 border-white object-cover h-[400px] w-full"
-                    />
-                    <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">{config.stats.satisfaction}</div>
-                            <div>
-                                <p className="text-xs text-gray-500 font-bold">نسبة رضا</p>
-                                <p className="text-sm font-bold text-gray-800">أولياء الأمور</p>
-                            </div>
+      {/* LEARNING PREVIEW */}
+      <div className="py-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-16">
+            <div className="lg:w-1/2 relative">
+                <div className="absolute inset-0 bg-kid-blue rounded-[3rem] rotate-3 opacity-20 transform scale-105"></div>
+                <img 
+                    src={config.hero.image || "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=1000&auto=format&fit=crop"} 
+                    alt="Kid learning" 
+                    className="relative rounded-[3rem] shadow-2xl -rotate-2 hover:rotate-0 transition-transform duration-500 border-8 border-white object-cover h-[450px] w-full bg-white"
+                />
+                
+                {/* Floating Badge */}
+                <div className="absolute -bottom-10 -right-4 bg-white p-6 rounded-[2rem] shadow-pop-lg border-4 border-gray-100 animate-bounce-slow">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-kid-green rounded-full flex items-center justify-center text-white font-black text-2xl shadow-inner border-4 border-green-300">A+</div>
+                        <div>
+                            <p className="text-sm text-gray-400 font-bold">تقييم ممتاز</p>
+                            <p className="text-xl font-black text-gray-800">تجربة ممتعة!</p>
                         </div>
                     </div>
                 </div>
             </div>
+            
             <div className="lg:w-1/2">
-                <span className="text-gharas-600 font-bold tracking-wider text-sm bg-gharas-50 px-3 py-1 rounded-full">منهجية التعليم</span>
-                <h2 className="text-4xl font-heading font-bold text-gray-900 mt-4 mb-6">نحول الشغف إلى مهارة</h2>
-                <div className="space-y-6">
-                    <div className="flex gap-4">
-                        <div className="w-12 h-12 bg-playful-blue/10 rounded-xl flex items-center justify-center text-playful-blue shrink-0 font-bold text-xl">1</div>
+                <span className="text-kid-purple font-black tracking-wider text-sm bg-purple-50 px-4 py-2 rounded-2xl border border-purple-100">طريقة التعلم</span>
+                <h2 className="text-5xl font-heading font-black text-gray-900 mt-6 mb-8 leading-tight">كيف نحول اللعب إلى <span className="text-kid-blue">مهارة؟</span></h2>
+                <div className="space-y-8">
+                    <div className="flex gap-6 group">
+                        <div className="w-16 h-16 bg-white border-4 border-kid-blue rounded-2xl flex items-center justify-center text-kid-blue shrink-0 font-black text-3xl shadow-pop group-hover:scale-110 transition-transform">1</div>
                         <div>
-                            <h4 className="font-bold text-xl text-gray-800">شاهد وتعلم</h4>
-                            <p className="text-gray-500 mt-1">دروس قصيرة، مركزة، وممتعة بصرياً.</p>
+                            <h4 className="font-black text-2xl text-gray-800 mb-2">شاهد بمتعة 📺</h4>
+                            <p className="text-gray-500 font-bold text-lg">فيديوهات قصيرة كأنها كرتون، ما تزهق منها!</p>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="w-12 h-12 bg-playful-orange/10 rounded-xl flex items-center justify-center text-playful-orange shrink-0 font-bold text-xl">2</div>
+                    <div className="flex gap-6 group">
+                        <div className="w-16 h-16 bg-white border-4 border-kid-orange rounded-2xl flex items-center justify-center text-kid-orange shrink-0 font-black text-3xl shadow-pop group-hover:scale-110 transition-transform">2</div>
                         <div>
-                            <h4 className="font-bold text-xl text-gray-800">طبق بيدك</h4>
-                            <p className="text-gray-500 mt-1">تمارين تفاعلية ومشاريع عملية في كل درس.</p>
+                            <h4 className="font-black text-2xl text-gray-800 mb-2">العب وطبق 🎮</h4>
+                            <p className="text-gray-500 font-bold text-lg">حل ألغاز وتمارين داخل اللعبة عشان تفهم الدرس.</p>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="w-12 h-12 bg-playful-purple/10 rounded-xl flex items-center justify-center text-playful-purple shrink-0 font-bold text-xl">3</div>
+                    <div className="flex gap-6 group">
+                        <div className="w-16 h-16 bg-white border-4 border-kid-pink rounded-2xl flex items-center justify-center text-kid-pink shrink-0 font-black text-3xl shadow-pop group-hover:scale-110 transition-transform">3</div>
                         <div>
-                            <h4 className="font-bold text-xl text-gray-800">احصل على الشهادة</h4>
-                            <p className="text-gray-500 mt-1">شهادة إتمام معتمدة تضاف لملفك في Totar.</p>
+                            <h4 className="font-black text-2xl text-gray-800 mb-2">استلم شهادتك 🏅</h4>
+                            <p className="text-gray-500 font-bold text-lg">شهادة فخمة باسمك تشاركها مع أهلك ومدرستك.</p>
                         </div>
                     </div>
                 </div>
@@ -175,22 +143,23 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
       </div>
 
       {/* TESTIMONIALS */}
-      <div className="py-20 bg-slate-50">
+      <div className="py-20 bg-kid-yellow/10">
           <div className="max-w-7xl mx-auto px-4">
-              <div className="text-center mb-12">
-                  <h2 className="text-3xl font-heading font-bold text-gray-900">قصص نجاح وسعادة</h2>
-                  <p className="text-gray-500 mt-2">ماذا يقول أولياء الأمور والطلاب عن غرس</p>
+              <div className="text-center mb-16">
+                  <h2 className="text-4xl font-heading font-black text-gray-900">أصدقاء غرس 💬</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {config.testimonials.map(t => (
-                      <div key={t.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
-                          <Quote className="absolute top-6 left-6 text-gray-100 fill-gray-100" size={48} />
-                          <p className="text-gray-600 mb-6 relative z-10">{t.comment}</p>
-                          <div className="flex items-center gap-3">
-                              <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {config.testimonials.map((t, i) => (
+                      <div key={t.id} className={`bg-white p-8 rounded-[2.5rem] shadow-sm border-4 border-white relative mt-6 transform hover:-translate-y-2 transition-transform ${i%2===0 ? 'rotate-1' : '-rotate-1'}`}>
+                          <div className="absolute -top-8 right-8 bg-kid-blue text-white p-3 rounded-2xl shadow-pop border-4 border-white">
+                            <Quote size={24} fill="currentColor" />
+                          </div>
+                          <p className="text-gray-600 mb-8 font-bold text-lg leading-relaxed">"{t.comment}"</p>
+                          <div className="flex items-center gap-4 border-t border-gray-100 pt-4">
+                              <img src={t.avatar} alt={t.name} className="w-14 h-14 rounded-full border-2 border-gray-100" />
                               <div>
-                                  <h4 className="font-bold text-gray-800 text-sm">{t.name}</h4>
-                                  <span className="text-xs text-gharas-600 bg-gharas-50 px-2 py-0.5 rounded">{t.role}</span>
+                                  <h4 className="font-black text-gray-800 text-lg">{t.name}</h4>
+                                  <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">{t.role}</span>
                               </div>
                           </div>
                       </div>
@@ -200,23 +169,23 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
       </div>
 
       {/* FAQ */}
-      <div className="py-20 bg-white">
+      <div className="py-20 bg-white mx-4 rounded-[3rem] my-10 border-4 border-gray-100">
           <div className="max-w-3xl mx-auto px-4">
               <div className="text-center mb-12">
-                  <h2 className="text-3xl font-heading font-bold text-gray-900">أسئلة شائعة</h2>
+                  <h2 className="text-4xl font-heading font-black text-gray-900">عندك سؤال؟ 🤔</h2>
               </div>
               <div className="space-y-4">
                   {config.faq.map(item => (
-                      <div key={item.id} className="border border-gray-100 rounded-2xl overflow-hidden">
+                      <div key={item.id} className="border-2 border-gray-100 rounded-3xl overflow-hidden shadow-sm">
                           <button 
                             onClick={() => setOpenFaq(openFaq === item.id ? null : item.id)}
-                            className="w-full flex items-center justify-between p-6 bg-gray-50 hover:bg-gray-100 transition-colors"
+                            className={`w-full flex items-center justify-between p-6 transition-colors ${openFaq === item.id ? 'bg-kid-blue text-white' : 'bg-white hover:bg-gray-50'}`}
                           >
-                              <span className="font-bold text-gray-800 text-right">{item.question}</span>
-                              <ChevronDown className={`text-gray-400 transition-transform ${openFaq === item.id ? 'rotate-180' : ''}`} />
+                              <span className="font-black text-lg text-right">{item.question}</span>
+                              <ChevronDown className={`transition-transform duration-300 ${openFaq === item.id ? 'rotate-180 text-white' : 'text-gray-400'}`} />
                           </button>
                           {openFaq === item.id && (
-                              <div className="p-6 bg-white text-gray-600 border-t border-gray-100 animate-fade-in">
+                              <div className="p-6 bg-blue-50 text-gray-700 font-bold leading-relaxed animate-fade-in border-t border-blue-100">
                                   {item.answer}
                               </div>
                           )}
@@ -227,15 +196,17 @@ const Home: React.FC<HomeProps> = ({ onStart, onBrowse }) => {
       </div>
 
       {/* CTA Bottom */}
-      <div className="py-20 bg-gharas-50">
-          <div className="max-w-5xl mx-auto px-4 text-center">
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-gray-900 mb-6">جاهز لبدء مغامرة التعلم؟</h2>
-              <p className="text-xl text-gray-600 mb-10">انضم لأكثر من {config.stats.students} طالب يبنون مستقبلهم اليوم.</p>
+      <div className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-kid-bg pointer-events-none"></div>
+          <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+              <div className="inline-block animate-bounce-slow mb-4 text-6xl">🚀</div>
+              <h2 className="text-4xl md:text-6xl font-heading font-black text-gray-900 mb-6 drop-shadow-sm">جاهز تبدأ المغامرة؟</h2>
+              <p className="text-2xl text-gray-600 mb-12 font-bold max-w-2xl mx-auto">انضم لأكثر من {config.stats.students} بطل وبطلة بيتعلموا ويبدعوا كل يوم.</p>
               <button 
                 onClick={onStart}
-                className="bg-gharas-600 text-white text-xl font-bold px-10 py-4 rounded-2xl shadow-xl hover:bg-gharas-700 hover:scale-105 transition-all"
+                className="bg-kid-purple text-white text-2xl font-black px-12 py-6 rounded-[2rem] shadow-pop-lg shadow-purple-300 hover:bg-purple-400 hover:shadow-none hover:translate-y-2 transition-all border-4 border-purple-400"
               >
-                  اشترك مجاناً الآن
+                  اشترك مجاناً الحين!
               </button>
           </div>
       </div>

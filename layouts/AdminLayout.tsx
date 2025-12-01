@@ -22,13 +22,22 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout, onNavigate, currentPage, children }) => {
+  // Define menu items with required permissions
   const menuItems = [
-    { id: 'admin_dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-    { id: 'admin_users', label: 'إدارة المستخدمين', icon: Users },
-    { id: 'admin_courses', label: 'إدارة الدورات', icon: BookOpen },
-    { id: 'admin_content', label: 'إدارة محتوى الموقع', icon: Monitor }, // New Item
-    { id: 'admin_reports', label: 'التقارير المالية', icon: PieChart },
+    { id: 'admin_dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, permission: null }, // Everyone sees dashboard
+    { id: 'admin_users', label: 'إدارة المستخدمين', icon: Users, permission: 'manage_users' },
+    { id: 'admin_courses', label: 'إدارة الدورات', icon: BookOpen, permission: 'manage_courses' },
+    { id: 'admin_content', label: 'إدارة محتوى الموقع', icon: Monitor, permission: 'manage_content' },
+    { id: 'admin_reports', label: 'التقارير المالية', icon: PieChart, permission: 'view_reports' },
   ];
+
+  // Filter items based on user permissions
+  const allowedMenuItems = menuItems.filter(item => {
+      // Super admin has all permissions implicitly if permissions array is missing but role is admin
+      if (!user.permissions) return true; 
+      if (item.permission === null) return true;
+      return user.permissions.includes(item.permission);
+  });
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans">
@@ -45,7 +54,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ user, onLogout, onNavigate, c
         </div>
 
         <div className="flex-1 py-6 px-3 space-y-2">
-            {menuItems.map(item => (
+            {allowedMenuItems.map(item => (
                 <button
                     key={item.id}
                     onClick={() => onNavigate(item.id)}

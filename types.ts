@@ -4,6 +4,7 @@ export interface User {
   name: string;
   email: string;
   role: 'student' | 'admin';
+  permissions?: string[]; // 'manage_users', 'manage_courses', 'manage_content', 'view_reports'
   age?: number;
   avatar: string;
   level: number;

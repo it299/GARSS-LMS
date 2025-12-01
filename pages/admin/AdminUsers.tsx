@@ -2,14 +2,28 @@
 import React, { useEffect, useState } from 'react';
 import { User } from '../../types';
 import { TotarService } from '../../services/totarService';
-import { Search, Trash2, Edit, MoreVertical, Shield, User as UserIcon, Plus, X } from 'lucide-react';
+import { Search, Trash2, Edit, MoreVertical, Shield, User as UserIcon, Plus, X, CheckSquare, Square, Check } from 'lucide-react';
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' as 'student' | 'admin' });
+  
+  const [formData, setFormData] = useState({ 
+      name: '', 
+      email: '', 
+      password: '', 
+      role: 'student' as 'student' | 'admin',
+      permissions: [] as string[]
+  });
+
+  const availablePermissions = [
+      { id: 'manage_users', label: 'إدارة المستخدمين', desc: 'إضافة، تعديل، وحذف الحسابات' },
+      { id: 'manage_courses', label: 'إدارة الدورات', desc: 'إنشاء وتعديل الدورات والمسارات' },
+      { id: 'manage_content', label: 'إدارة المحتوى', desc: 'تعديل نصوص الصفحة الرئيسية والصور' },
+      { id: 'view_reports', label: 'التقارير المالية', desc: 'الاطلاع على الإيرادات والإحصائيات' },
+  ];
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -33,8 +47,18 @@ const AdminUsers: React.FC = () => {
       e.preventDefault();
       await TotarService.createUser(formData);
       setIsModalOpen(false);
-      setFormData({ name: '', email: '', password: '', role: 'student' });
+      setFormData({ name: '', email: '', password: '', role: 'student', permissions: [] });
       fetchUsers();
+  };
+
+  const togglePermission = (permId: string) => {
+      setFormData(prev => {
+          if (prev.permissions.includes(permId)) {
+              return { ...prev, permissions: prev.permissions.filter(p => p !== permId) };
+          } else {
+              return { ...prev, permissions: [...prev.permissions, permId] };
+          }
+      });
   };
 
   const filteredUsers = users.filter(u => 
@@ -73,7 +97,7 @@ const AdminUsers: React.FC = () => {
                       <tr>
                           <th className="px-6 py-4">المستخدم</th>
                           <th className="px-6 py-4">الدور</th>
-                          <th className="px-6 py-4">المستوى</th>
+                          <th className="px-6 py-4">الصلاحيات</th>
                           <th className="px-6 py-4">تاريخ الانضمام</th>
                           <th className="px-6 py-4">الإجراءات</th>
                       </tr>
@@ -102,7 +126,21 @@ const AdminUsers: React.FC = () => {
                                   )}
                               </td>
                               <td className="px-6 py-4 font-medium text-gray-600">
-                                  المستوى {user.level}
+                                  {user.role === 'admin' ? (
+                                      <div className="flex flex-wrap gap-1">
+                                          {user.permissions && user.permissions.length > 0 ? (
+                                              user.permissions.map(p => (
+                                                  <span key={p} className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-100">
+                                                      {availablePermissions.find(ap => ap.id === p)?.label || p}
+                                                  </span>
+                                              ))
+                                          ) : (
+                                              <span className="text-xs text-green-600 font-bold">وصول كامل (Super Admin)</span>
+                                          )}
+                                      </div>
+                                  ) : (
+                                      <span className="text-gray-400">-</span>
+                                  )}
                               </td>
                               <td className="px-6 py-4 text-gray-500 text-sm">
                                   {user.joinDate ? new Date(user.joinDate).toLocaleDateString('ar-EG') : '-'}
@@ -137,12 +175,13 @@ const AdminUsers: React.FC = () => {
       {/* Add User Modal */}
       {isModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+              <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
                   <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                       <h2 className="text-xl font-bold text-gray-800">إضافة مستخدم جديد</h2>
                       <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-500"><X /></button>
                   </div>
-                  <form onSubmit={handleCreate} className="p-6 space-y-4">
+                  
+                  <form onSubmit={handleCreate} className="p-6 space-y-4 overflow-y-auto">
                       <div>
                           <label className="block text-sm font-bold text-gray-700 mb-1">الاسم الكامل</label>
                           <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-gharas-500 outline-none" placeholder="اسم المستخدم" />
@@ -155,14 +194,47 @@ const AdminUsers: React.FC = () => {
                           <label className="block text-sm font-bold text-gray-700 mb-1">كلمة المرور</label>
                           <input type="password" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-gharas-500 outline-none" placeholder="********" />
                       </div>
-                      <div>
-                          <label className="block text-sm font-bold text-gray-700 mb-1">الصلاحية</label>
-                          <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as any})} className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-gharas-500 outline-none">
-                              <option value="student">طالب</option>
-                              <option value="admin">مدير (Admin)</option>
-                          </select>
+                      
+                      <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                          <label className="block text-sm font-bold text-gray-700 mb-3">نوع الحساب</label>
+                          <div className="flex gap-4 mb-4">
+                              <label className={`flex-1 cursor-pointer p-3 rounded-xl border-2 text-center transition-all ${formData.role === 'student' ? 'border-gharas-500 bg-green-50 text-gharas-600' : 'border-gray-200 bg-white text-gray-500'}`}>
+                                  <input type="radio" name="role" value="student" checked={formData.role === 'student'} onChange={() => setFormData({...formData, role: 'student'})} className="hidden" />
+                                  <span className="font-bold block">طالب</span>
+                              </label>
+                              <label className={`flex-1 cursor-pointer p-3 rounded-xl border-2 text-center transition-all ${formData.role === 'admin' ? 'border-purple-500 bg-purple-50 text-purple-600' : 'border-gray-200 bg-white text-gray-500'}`}>
+                                  <input type="radio" name="role" value="admin" checked={formData.role === 'admin'} onChange={() => setFormData({...formData, role: 'admin'})} className="hidden" />
+                                  <span className="font-bold block">مدير</span>
+                              </label>
+                          </div>
+
+                          {formData.role === 'admin' && (
+                              <div className="space-y-3 animate-fade-in bg-white p-3 rounded-xl border border-gray-100">
+                                  <p className="text-xs font-bold text-gray-500 mb-2">تحديد الصلاحيات:</p>
+                                  {availablePermissions.map(perm => (
+                                      <label key={perm.id} className="flex items-start gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors select-none">
+                                          <div 
+                                            className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-all ${formData.permissions.includes(perm.id) ? 'bg-gharas-600 border-gharas-600 text-white' : 'border-gray-300 bg-white'}`}
+                                          >
+                                              {formData.permissions.includes(perm.id) && <Check size={14} strokeWidth={3} />}
+                                          </div>
+                                          <input 
+                                            type="checkbox" 
+                                            checked={formData.permissions.includes(perm.id)} 
+                                            onChange={() => togglePermission(perm.id)} 
+                                            className="hidden"
+                                          />
+                                          <div>
+                                              <span className="text-sm text-gray-800 font-bold block">{perm.label}</span>
+                                              <span className="text-xs text-gray-400">{perm.desc}</span>
+                                          </div>
+                                      </label>
+                                  ))}
+                              </div>
+                          )}
                       </div>
-                      <button type="submit" className="w-full bg-gharas-600 text-white font-bold py-4 rounded-xl mt-4 hover:bg-gharas-700 shadow-lg">حفظ المستخدم</button>
+
+                      <button type="submit" className="w-full bg-gharas-600 text-white font-bold py-4 rounded-xl mt-4 hover:bg-gharas-700 shadow-lg transition-transform hover:-translate-y-1">حفظ المستخدم</button>
                   </form>
               </div>
           </div>

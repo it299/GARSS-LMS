@@ -93,6 +93,7 @@ const MOCK_USERS: User[] = [
         name: 'أحمد البطل',
         email: 'ahmed@gharas.sa',
         role: 'student',
+        permissions: [],
         age: 10,
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed',
         level: 3,
@@ -107,6 +108,7 @@ const MOCK_USERS: User[] = [
         name: 'مدير النظام',
         email: 'admin@gharas.sa',
         role: 'admin',
+        permissions: ['manage_users', 'manage_courses', 'manage_content', 'view_reports'],
         avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
         level: 99,
         points: 0,
@@ -182,6 +184,7 @@ export const TotarService = {
                 name: data.name,
                 email: data.email,
                 role: 'student',
+                permissions: [],
                 age: parseInt(data.age),
                 avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.name}`,
                 points: 0,
@@ -202,7 +205,7 @@ export const TotarService = {
     });
   },
 
-  // NEW: Create User by Admin
+  // NEW: Create User by Admin with Permissions
   createUser: async (userData: any): Promise<User> => {
       return new Promise((resolve) => {
           setTimeout(() => {
@@ -211,6 +214,7 @@ export const TotarService = {
                 name: userData.name,
                 email: userData.email,
                 role: userData.role || 'student',
+                permissions: userData.role === 'admin' ? userData.permissions : [],
                 age: 10, // default
                 avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.name}`,
                 points: 0,

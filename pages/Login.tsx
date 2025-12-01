@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { TotarService } from '../services/totarService';
-import { Leaf, Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { Leaf, Mail, Lock, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 
 interface LoginProps {
   onSuccess: (user: User) => void;
@@ -30,119 +30,80 @@ const Login: React.FC<LoginProps> = ({ onSuccess, onRegisterClick }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-40 h-40 bg-playful-yellow rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-playful-blue rounded-full blur-3xl opacity-20"></div>
-      </div>
+    <div className="min-h-screen bg-kid-bg flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Fun Background Blobs */}
+      <div className="absolute -top-20 -left-20 w-80 h-80 bg-kid-yellow rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-float"></div>
+      <div className="absolute top-1/2 -right-20 w-80 h-80 bg-kid-blue rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-float" style={{animationDelay: '1s'}}></div>
+      <div className="absolute -bottom-20 left-1/3 w-80 h-80 bg-kid-pink rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-float" style={{animationDelay: '2s'}}></div>
 
-      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="flex justify-center mb-6">
-          <div className="bg-gharas-500 p-3 rounded-2xl text-white shadow-lg rotate-3">
-            <Leaf size={40} strokeWidth={2.5} />
-          </div>
-        </div>
-        <h2 className="text-center text-3xl font-heading font-bold text-gray-900">
-          أهلاً بعودتك يا بطل! 👋
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          سجل دخولك لتكمل رحلة التعلم والإبداع
-        </p>
-      </div>
+      <div className="bg-white/80 backdrop-blur-md w-full max-w-md rounded-[3rem] shadow-2xl border-4 border-white relative z-10 overflow-hidden">
+         <div className="bg-gradient-to-r from-kid-green to-gharas-500 h-32 flex items-center justify-center relative">
+             <div className="bg-white p-4 rounded-3xl shadow-pop-lg transform rotate-6 border-4 border-kid-yellow absolute -bottom-10">
+                <Leaf size={40} className="text-gharas-500" strokeWidth={3} />
+             </div>
+             {/* Decor */}
+             <div className="absolute top-4 left-4 text-white/30 text-4xl">★</div>
+             <div className="absolute bottom-4 right-4 text-white/30 text-2xl">●</div>
+         </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-white py-8 px-4 shadow-xl shadow-gray-100 sm:rounded-3xl sm:px-10 border border-white">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700">
-                البريد الإلكتروني
-              </label>
-              <div className="mt-2 relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+         <div className="pt-16 pb-10 px-8 text-center">
+            <h2 className="text-3xl font-heading font-black text-gray-800 mb-2">أهلاً يا بطل! 👋</h2>
+            <p className="text-gray-500 font-bold mb-8">سجل دخولك عشان تكمل مغامرتك</p>
+
+            <form className="space-y-5" onSubmit={handleSubmit}>
+                <div className="relative">
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                        <Mail size={20} />
+                    </div>
+                    <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="block w-full pr-12 pl-4 py-4 rounded-2xl bg-gray-50 border-2 border-gray-100 focus:border-kid-blue focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all font-bold text-gray-700 outline-none"
+                        placeholder="البريد الإلكتروني"
+                    />
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pr-10 border-gray-300 rounded-xl focus:ring-gharas-500 focus:border-gharas-500 py-3 bg-gray-50 border outline-none transition-all"
-                  placeholder="name@example.com"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-bold text-gray-700">
-                كلمة المرور
-              </label>
-              <div className="mt-2 relative rounded-xl shadow-sm">
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <div className="relative">
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400">
+                        <Lock size={20} />
+                    </div>
+                    <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="block w-full pr-12 pl-4 py-4 rounded-2xl bg-gray-50 border-2 border-gray-100 focus:border-kid-blue focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all font-bold text-gray-700 outline-none"
+                        placeholder="كلمة السر السرية"
+                    />
                 </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pr-10 border-gray-300 rounded-xl focus:ring-gharas-500 focus:border-gharas-500 py-3 bg-gray-50 border outline-none transition-all"
-                  placeholder="********"
-                />
-              </div>
-            </div>
 
-            {error && (
-              <div className="rounded-xl bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <AlertCircle className="h-5 w-5 text-red-400" aria-hidden="true" />
-                  </div>
-                  <div className="mr-3">
-                    <h3 className="text-sm font-bold text-red-800">{error}</h3>
-                  </div>
-                </div>
-              </div>
-            )}
+                {error && (
+                    <div className="bg-red-50 border-2 border-red-100 p-3 rounded-2xl flex items-center gap-2 text-red-500 font-bold text-sm">
+                        <AlertCircle size={18} /> {error}
+                    </div>
+                )}
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-gharas-200 text-sm font-bold text-white bg-gharas-600 hover:bg-gharas-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gharas-500 transition-all hover:-translate-y-1"
-              >
-                {loading ? <Loader2 className="animate-spin" /> : 'تسجيل الدخول'}
-              </button>
-            </div>
-          </form>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 bg-kid-blue text-white rounded-2xl font-black text-xl shadow-pop-colored text-kid-blue hover:-translate-y-1 transition-transform border-2 border-transparent hover:bg-blue-400"
+                >
+                    {loading ? <Loader2 className="animate-spin mx-auto" /> : 'دخول'}
+                </button>
+            </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">أو</span>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                ليس لديك حساب؟{' '}
+            <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200">
+                <p className="text-gray-500 font-bold mb-4">جديد معنا؟</p>
                 <button 
                     onClick={onRegisterClick}
-                    className="font-bold text-gharas-600 hover:text-gharas-500"
+                    className="w-full py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-2xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-colors"
                 >
-                  أنشئ حساباً جديداً
+                    اصنع حساب جديد 🚀
                 </button>
-              </p>
             </div>
-          </div>
-        </div>
+         </div>
       </div>
     </div>
   );

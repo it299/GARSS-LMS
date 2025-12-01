@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from '../types';
-import { Leaf, LogIn, LogOut, Menu, X, User as UserIcon, Settings, LayoutDashboard } from 'lucide-react';
+import { Leaf, LogIn, LogOut, Menu, X, User as UserIcon, Settings } from 'lucide-react';
 
 interface NavbarProps {
   user: User | null;
@@ -14,16 +14,16 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
   const [isOpen, setIsOpen] = React.useState(false);
   const [showDropdown, setShowDropdown] = React.useState(false);
 
-  const NavLink = ({ page, label, icon }: { page: string; label: string, icon?: React.ReactNode }) => (
+  const NavLink = ({ page, label, icon, color = 'hover:text-gharas-600' }: { page: string; label: string, icon?: React.ReactNode, color?: string }) => (
     <button
       onClick={() => {
         onNavigate(page);
         setIsOpen(false);
       }}
-      className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all font-bold text-sm lg:text-base ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all font-bold text-base lg:text-lg border-2 border-transparent ${
         currentPage === page
-          ? 'bg-gharas-100 text-gharas-700'
-          : 'text-gray-600 hover:bg-gray-100'
+          ? 'bg-kid-yellow text-gray-800 shadow-pop'
+          : `text-gray-600 hover:bg-white hover:shadow-sm ${color}`
       }`}
     >
       {icon}
@@ -32,56 +32,57 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
   );
 
   return (
-    <nav className="bg-white/95 backdrop-blur-md border-b border-gharas-100 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
+    <nav className="sticky top-4 z-50 px-4 mb-4">
+      <div className="max-w-7xl mx-auto bg-white/90 backdrop-blur-md rounded-[2rem] shadow-xl border-4 border-white/50 px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-24 items-center">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer gap-2" onClick={() => onNavigate('home')}>
-            <div className="bg-gharas-500 p-2 rounded-2xl text-white shadow-lg rotate-3 hover:rotate-0 transition-transform">
-              <Leaf size={24} strokeWidth={2.5} />
+          <div className="flex items-center cursor-pointer gap-2 group" onClick={() => onNavigate('home')}>
+            <div className="bg-gharas-500 p-3 rounded-2xl text-white shadow-pop-colored text-gharas-500 group-hover:animate-wiggle transform -rotate-6">
+              <Leaf size={28} strokeWidth={3} />
             </div>
-            <span className="text-2xl font-heading font-bold text-gray-800 tracking-tight">غرس</span>
+            <span className="text-3xl font-heading font-black text-gharas-600 tracking-tight drop-shadow-sm group-hover:scale-105 transition-transform">غرس</span>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center gap-1 xl:gap-2">
-            <NavLink page="home" label="الرئيسية" />
-            <NavLink page="courses" label="الدورات" />
-            <NavLink page="paths" label="المسارات التعليمية" />
-            <NavLink page="about" label="من نحن" />
-            <NavLink page="contact" label="اتصل بنا" />
-            {user && <NavLink page="dashboard" label="لوحتي" />}
-            <NavLink page="tutor" label="المرشد الذكي" icon={<span className="text-lg">🤖</span>} />
+          <div className="hidden xl:flex items-center gap-2">
+            <NavLink page="home" label="الرئيسية" color="hover:text-kid-blue" />
+            <NavLink page="courses" label="الدورات" color="hover:text-kid-purple" />
+            <NavLink page="paths" label="المسارات" color="hover:text-kid-pink" />
+            <NavLink page="tutor" label="المرشد الذكي" icon={<span className="text-xl animate-bounce">🤖</span>} />
             
-            <div className="h-6 w-px bg-gray-200 mx-2"></div>
+            <div className="h-8 w-px bg-gray-200 mx-2 rounded-full"></div>
 
             {user ? (
               <div className="relative">
                 <div 
-                    className="flex items-center gap-2 bg-gharas-50 px-2 py-1.5 rounded-full border border-gharas-200 cursor-pointer hover:bg-gharas-100 transition-colors" 
+                    className="flex items-center gap-3 bg-kid-bg px-3 py-2 rounded-full border-2 border-kid-blue cursor-pointer hover:bg-blue-50 transition-all hover:scale-105 shadow-sm" 
                     onClick={() => setShowDropdown(!showDropdown)}
                 >
-                    <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border-2 border-white shadow-sm" />
-                    <div className="text-xs hidden xl:block text-right">
-                    <p className="font-bold text-gharas-800 leading-none">{user.name}</p>
-                    <p className="text-gray-500 text-[10px]">ن نقاط: {user.points}</p>
+                    <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white shadow-sm bg-white" />
+                    <div className="text-right hidden xl:block">
+                        <p className="font-bold text-gray-800 leading-none text-sm">{user.name}</p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                            <span className="text-[10px] bg-kid-yellow px-1.5 rounded-md font-bold text-gray-700">⭐ {user.points}</span>
+                        </div>
                     </div>
                 </div>
 
                 {showDropdown && (
                     <>
                         <div className="fixed inset-0 z-10" onClick={() => setShowDropdown(false)}></div>
-                        <div className="absolute left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20 animate-fade-in">
-                            <button onClick={() => { onNavigate('profile'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                <UserIcon size={16} /> الملف الشخصي
-                            </button>
-                            <button onClick={() => { onNavigate('settings'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                <Settings size={16} /> الإعدادات
-                            </button>
-                            <div className="border-t border-gray-100"></div>
-                            <button onClick={() => { onLogout(); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm text-red-500 hover:bg-red-50 flex items-center gap-2 font-bold">
-                                <LogOut size={16} /> تسجيل خروج
-                            </button>
+                        <div className="absolute left-0 mt-4 w-56 bg-white rounded-3xl shadow-xl border-2 border-gray-100 overflow-hidden z-20 animate-float">
+                            <div className="p-2 space-y-1">
+                                <button onClick={() => { onNavigate('profile'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors">
+                                    <div className="bg-blue-100 p-1.5 rounded-lg text-blue-500"><UserIcon size={16} /></div> الملف الشخصي
+                                </button>
+                                <button onClick={() => { onNavigate('settings'); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-gray-700 hover:bg-kid-bg rounded-2xl flex items-center gap-2 transition-colors">
+                                    <div className="bg-purple-100 p-1.5 rounded-lg text-purple-500"><Settings size={16} /></div> الإعدادات
+                                </button>
+                                <div className="border-t border-gray-100 my-1"></div>
+                                <button onClick={() => { onLogout(); setShowDropdown(false); }} className="w-full text-right px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl flex items-center gap-2 transition-colors">
+                                    <div className="bg-red-100 p-1.5 rounded-lg text-red-500"><LogOut size={16} /></div> خروج
+                                </button>
+                            </div>
                         </div>
                     </>
                 )}
@@ -89,19 +90,19 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
             ) : (
               <button
                 onClick={onLogin}
-                className="flex items-center gap-2 bg-gharas-600 hover:bg-gharas-700 text-white px-5 py-2.5 rounded-full font-bold text-sm shadow-md shadow-gharas-200 transition-all transform hover:scale-105"
+                className="flex items-center gap-2 bg-kid-purple text-white px-6 py-3 rounded-2xl font-bold text-lg shadow-pop-colored text-kid-purple hover:-translate-y-1 transition-transform border-2 border-transparent"
               >
-                <LogIn size={16} />
-                دخول / تسجيل
+                <LogIn size={20} strokeWidth={3} />
+                دخول
               </button>
             )}
           </div>
 
           {/* Mobile Button */}
-          <div className="lg:hidden flex items-center">
+          <div className="xl:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-gharas-600 p-2"
+              className="text-gharas-600 bg-gharas-50 p-3 rounded-2xl hover:bg-gharas-100 transition-colors"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -111,41 +112,38 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogin, onLogout, onNavigate, cu
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-b border-gharas-100 p-4 space-y-2 shadow-lg absolute w-full top-20 left-0 z-40">
-          <NavLink page="home" label="الرئيسية" />
-          <NavLink page="courses" label="جميع الدورات" />
-          <NavLink page="paths" label="المسارات الشاملة" />
-          <NavLink page="about" label="من نحن" />
-          <NavLink page="contact" label="اتصل بنا" />
-          {user && <NavLink page="dashboard" label="لوحة التحكم" />}
-          <NavLink page="tutor" label="المرشد الذكي (AI)" />
+        <div className="xl:hidden mt-4 bg-white/95 backdrop-blur-xl border-2 border-white rounded-[2rem] p-6 space-y-3 shadow-2xl relative z-40 mx-auto max-w-lg">
+          <NavLink page="home" label="🏠 الرئيسية" />
+          <NavLink page="courses" label="📚 الدورات" />
+          <NavLink page="paths" label="🚀 المسارات" />
+          <NavLink page="tutor" label="🤖 المرشد الذكي" />
           
-          <div className="border-t border-gray-100 pt-3 mt-2">
+          <div className="border-t-2 border-dashed border-gray-200 pt-4 mt-2">
              {user ? (
-              <div className="space-y-2">
-                 <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-xl">
-                   <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full" />
+              <div className="space-y-3">
+                 <div className="flex items-center gap-3 p-3 bg-kid-bg border-2 border-kid-blue rounded-2xl">
+                   <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full border-2 border-white shadow-sm" />
                    <div>
-                       <span className="font-bold text-gray-700 block">{user.name}</span>
-                       <span className="text-xs text-gray-500">{user.email}</span>
+                       <span className="font-black text-gray-800 block text-lg">{user.name}</span>
+                       <span className="text-sm font-bold text-kid-blue bg-white px-2 rounded-full inline-block mt-1">⭐ {user.points} نقطة</span>
                    </div>
                 </div>
-                <button onClick={() => { onNavigate('profile'); setIsOpen(false); }} className="w-full text-right p-3 rounded-xl hover:bg-gray-50 text-gray-600 font-bold flex items-center gap-2">
-                    <UserIcon size={18} /> الملف الشخصي
+                <button onClick={() => { onNavigate('profile'); setIsOpen(false); }} className="w-full text-right p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold flex items-center gap-3">
+                    <UserIcon size={20} className="text-blue-500" /> الملف الشخصي
                 </button>
-                <button onClick={() => { onNavigate('settings'); setIsOpen(false); }} className="w-full text-right p-3 rounded-xl hover:bg-gray-50 text-gray-600 font-bold flex items-center gap-2">
-                    <Settings size={18} /> الإعدادات
+                <button onClick={() => { onNavigate('settings'); setIsOpen(false); }} className="w-full text-right p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold flex items-center gap-3">
+                    <Settings size={20} className="text-purple-500" /> الإعدادات
                 </button>
-                <button onClick={onLogout} className="w-full text-right p-3 rounded-xl hover:bg-red-50 text-red-500 font-bold flex items-center gap-2">
-                    <LogOut size={18} /> تسجيل خروج
+                <button onClick={onLogout} className="w-full text-right p-4 rounded-2xl bg-red-50 hover:bg-red-100 text-red-500 font-bold flex items-center gap-3">
+                    <LogOut size={20} /> خروج
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => { onLogin(); setIsOpen(false); }}
-                className="w-full text-center bg-gharas-600 text-white py-3 rounded-xl font-bold"
+                className="w-full text-center bg-kid-green text-white py-4 rounded-2xl font-black text-xl shadow-pop-colored text-kid-green hover:brightness-105"
               >
-                تسجيل الدخول / إنشاء حساب
+                ابدأ رحلتك الآن! 🚀
               </button>
             )}
           </div>
